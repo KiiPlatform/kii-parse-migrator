@@ -24,3 +24,9 @@ optional arguments:
 ## Contribution
 
 *   [httplib2](https://code.google.com/p/httplib2/)
+
+
+## Limitation
+
+Migrated objects are not counted in developer portal Web UI.  It is an isssue
+of Web UI, and will be fixed soon.
