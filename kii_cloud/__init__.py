@@ -40,8 +40,11 @@ def json_request(uri, method, data, headers, logger=None):
     except ValueError:
         return (resp_headers, {})
 
-def create_user(data):
-    uri = u'/'.join([BASE_URL, u'apps', APP_ID, u'users'])
+def create_user(data, user_id=None):
+    uri_array = [BASE_URL, u'apps', APP_ID, u'users']
+    if user_id:
+        uri_array.append(user_id)
+    uri = u'/'.join(uri_array)
     headers = {
             u'content-type': u'application/vnd.kii.RegistrationRequest+json',
             u'x-kii-appid': APP_ID,
@@ -76,10 +79,13 @@ def _has_token(username, password):
         TOKEN = str(resp_json['access_token'])
         return True
 
-def create_object(bucket, data):
+def create_object(bucket, data, obj_id=None):
     if not _has_token(u'kii_migrator', u'12345678'):
         return False
-    uri = u'/'.join([BASE_URL, u'apps', APP_ID, u'buckets', bucket, u'objects'])
+    uri_array = [BASE_URL, u'apps', APP_ID, u'buckets', bucket, u'objects']
+    if obj_id:
+        uri_array.append(obj_id)
+    uri = u'/'.join(uri_array)
     headers = {
             'Authorization': u'Bearer ' + TOKEN,
             'content-type': 'content-type:application/vnd.%s.mydata+json' % APP_ID,

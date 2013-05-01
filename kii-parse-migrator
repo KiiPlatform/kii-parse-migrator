@@ -10,6 +10,8 @@ import json
 
 logger = logging.getLogger('kii-parse-migrator')
 
+DRY_RUN = False
+
 def parse_args():
     parser = argparse.ArgumentParser(
             description='Move data from Parse to Kii Cloud')
@@ -20,8 +22,12 @@ def parse_args():
     parser.add_argument('-k', '--app_key',
             help='App Key of your app on Kii Cloud', required=True)
     parser.add_argument('-r', '--region')
+    parser.add_argument('-n', '--dryrun', action='store_true')
     parser.add_argument('-v', '--verbose', dest='verbose', action='store_true')
     return parser.parse_args()
+
+def is_user_schema(schema):
+    return schema == '_User'
 
 def to_schema(filename):
     # TODO:
@@ -43,12 +49,28 @@ def read_json_objects(file):
         else:
             buf.append(s)
 
+def convert_object(schema, orig):
+    converted = orig.copy()
+    # FIXME: convert fields if need.
+    return converted
+
+def save_object(schema, obj, obj_id):
+    if DRY_RUN:
+        logger.debug('save_object: schema=%s obj=%s obj_id=%s' %
+                (schema, obj, obj_id))
+        return True
+    elif is_user_schema(schema):
+        return kii_cloud.create_user(obj, obj_id)
+    else:
+        return kii_cloud.create_object(obj, obj_id)
+
 def migrate_an_object(schema, orig):
-    # TODO:
-    print(orig)
+    obj_id = orig.get('objectId')
+    converted = convert_object(schema, orig)
+    return save_object(schema, converted, obj_id)
 
 def migrate_objects(zip_file, filename):
-    print('filename=%s' % filename)
+    logger.debug('migrate_objects: filename=%s' % filename)
     schema = to_schema(filename)
     try:
         zf = zip_file.open(filename, 'rU')
@@ -73,4 +95,5 @@ if __name__=="__main__":
     if args.verbose:
         logging.basicConfig(level=logging.DEBUG)
         logger.debug('Arguments: %s', args)
+    DRY_RUN = args.dryrun
     migrate_to_kii(args.input, args.app_id, args.app_key, args.region)
