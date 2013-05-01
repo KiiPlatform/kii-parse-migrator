@@ -18,6 +18,8 @@ optional arguments:
   -k APP_KEY, --app_key APP_KEY
                         App Key of your app on Kii Cloud
   -r REGION, --region REGION
+                        Specify "jp" for Japan server
+  -n, --dryrun
   -v, --verbose
 ```
 
@@ -29,4 +31,4 @@ optional arguments:
 ## Limitation
 
 Migrated objects are not counted in developer portal Web UI.  It is an isssue
-of Web UI, and will be fixed soon.
+of Web UI, and will be fixed soon.  (CMO-3228)
