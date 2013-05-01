@@ -17,6 +17,7 @@ def init(app_id, app_key, region):
     APP_ID = app_id
     APP_KEY = app_key
     if region == u'jp':
+        default_logger.debug('Choosed Japan server')
         BASE_URL = u'https://api-jp.kii.com/api'
     else:
         BASE_URL = u'https://api.kii.com/api'

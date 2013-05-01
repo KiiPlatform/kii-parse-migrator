@@ -2,5 +2,32 @@
 # -*- coding: utf-8 -*-
 # vim:set sts=4 sw=4 tw=0 et:
 
+import kii_cloud
+import logging
+import argparse
+
+logger = logging.getLogger('kii-parse-migrator')
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+            description='Move data from Parse to Kii Cloud')
+    parser.add_argument('-i', '--input',
+            help='exports.zip from Parse', required=True)
+    parser.add_argument('-d', '--app_id',
+            help='App ID form your app on Kii Cloud', required=True)
+    parser.add_argument('-k', '--app_key',
+            help='App Key form your app on Kii Cloud', required=True)
+    parser.add_argument('-r', '--region')
+    parser.add_argument('-v', '--verbose', dest='verbose', action='store_true')
+    return parser.parse_args()
+
+def migrate2kii(zipfile, app_id, app_key, region):
+    kii_cloud.init(app_id, app_key, region)
+    # TODO:
+
 if __name__=="__main__":
-    pass
+    args = parse_args()
+    if args.verbose:
+        logging.basicConfig(level=logging.DEBUG)
+        logger.debug('Arguments: %s', args)
+    migrate2kii(args.input, args.app_id, args.app_key, args.region)
