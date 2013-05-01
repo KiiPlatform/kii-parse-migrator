@@ -7,6 +7,7 @@ import logging
 import argparse
 from zipfile import ZipFile
 import json
+import os
 
 logger = logging.getLogger('kii-parse-migrator')
 
@@ -28,8 +29,7 @@ def is_user_schema(schema):
     return schema == '_User'
 
 def to_schema(filename):
-    # TODO:
-    return None
+    return os.path.splitext(os.path.basename(filename))[0]
 
 def to_json(array):
     # FIXME: add error handling
@@ -66,8 +66,12 @@ def migrate_an_object(schema, orig):
     return save_object(schema, converted, obj_id)
 
 def migrate_objects(zip_file, filename):
-    logger.debug('migrate_objects: filename=%s' % filename)
     schema = to_schema(filename)
+    if not schema:
+        logger.warn('skip %s', filename)
+        return
+    logger.debug('migrate_objects: filename=%s (schema=%s)' %
+            (filename, schema))
     try:
         zf = zip_file.open(filename, 'rU')
         for json in read_json_objects(zf):
