@@ -16,9 +16,9 @@ def parse_args():
     parser.add_argument('-i', '--input',
             help='export.zip from Parse', required=True)
     parser.add_argument('-d', '--app_id',
-            help='App ID form your app on Kii Cloud', required=True)
+            help='App ID of your app on Kii Cloud', required=True)
     parser.add_argument('-k', '--app_key',
-            help='App Key form your app on Kii Cloud', required=True)
+            help='App Key of your app on Kii Cloud', required=True)
     parser.add_argument('-r', '--region')
     parser.add_argument('-v', '--verbose', dest='verbose', action='store_true')
     return parser.parse_args()
