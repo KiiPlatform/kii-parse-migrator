@@ -5,6 +5,8 @@
 import kii_cloud
 import logging
 import argparse
+from zipfile import ZipFile
+import json
 
 logger = logging.getLogger('kii-parse-migrator')
 
@@ -12,7 +14,7 @@ def parse_args():
     parser = argparse.ArgumentParser(
             description='Move data from Parse to Kii Cloud')
     parser.add_argument('-i', '--input',
-            help='exports.zip from Parse', required=True)
+            help='export.zip from Parse', required=True)
     parser.add_argument('-d', '--app_id',
             help='App ID form your app on Kii Cloud', required=True)
     parser.add_argument('-k', '--app_key',
@@ -21,13 +23,54 @@ def parse_args():
     parser.add_argument('-v', '--verbose', dest='verbose', action='store_true')
     return parser.parse_args()
 
-def migrate2kii(zipfile, app_id, app_key, region):
-    kii_cloud.init(app_id, app_key, region)
+def to_schema(filename):
     # TODO:
+    return None
+
+def to_json(array):
+    # FIXME: add error handling
+    return json.loads('\n'.join(array))
+
+def read_json_objects(file):
+    buf = []
+    for line in file:
+        s = line.rstrip()
+        if s == '{':
+            buf = [ '{' ]
+        elif s == '}' or s == '},':
+            buf.append('}')
+            yield to_json(buf)
+        else:
+            buf.append(s)
+
+def migrate_an_object(schema, orig):
+    # TODO:
+    print(orig)
+
+def migrate_objects(zip_file, filename):
+    print('filename=%s' % filename)
+    schema = to_schema(filename)
+    try:
+        zf = zip_file.open(filename, 'rU')
+        for json in read_json_objects(zf):
+            migrate_an_object(schema, json)
+    finally:
+        zf.close()
+
+def migrate_to_kii(zip_path, app_id, app_key, region):
+    kii_cloud.init(app_id, app_key, region)
+    zip_file = ZipFile(zip_path, 'r')
+    try:
+        for info in zip_file.infolist():
+            if info.filename[-5:] != '.json':
+                continue
+            migrate_objects(zip_file, info.filename)
+    finally:
+        zip_file.close()
 
 if __name__=="__main__":
     args = parse_args()
     if args.verbose:
         logging.basicConfig(level=logging.DEBUG)
         logger.debug('Arguments: %s', args)
-    migrate2kii(args.input, args.app_id, args.app_key, args.region)
+    migrate_to_kii(args.input, args.app_id, args.app_key, args.region)
