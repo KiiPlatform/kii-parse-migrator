@@ -1,3 +1,7 @@
+# Kii Parse Migrator
+
+Data migration tool from parse.com to kii.com.
+
 ## Contribution
 
 *   [httplib2](https://code.google.com/p/httplib2/)
