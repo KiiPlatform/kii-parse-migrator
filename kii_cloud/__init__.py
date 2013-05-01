@@ -40,10 +40,8 @@ def json_request(uri, method, data, headers, logger=None):
     except ValueError:
         return (resp_headers, {})
 
-def create_user(data, user_id=None):
+def create_user(data):
     uri_array = [BASE_URL, u'apps', APP_ID, u'users']
-    if user_id:
-        uri_array.append(user_id)
     uri = u'/'.join(uri_array)
     headers = {
             u'content-type': u'application/vnd.kii.RegistrationRequest+json',
@@ -92,7 +90,7 @@ def create_object(bucket, data, obj_id=None):
             'x-kii-appid': APP_ID,
             'x-kii-appkey': APP_KEY,
             }
-    (resp, resp_json) = json_request(uri, 'POST', data, headers)
+    (resp, resp_json) = json_request(uri, 'PUT', data, headers)
     if resp.status == 201:
         return True
     else:

@@ -49,6 +49,9 @@ def read_json_objects(file):
 
 def convert_object(schema, orig):
     converted = orig.copy()
+    if is_user_schema(schema):
+        converted['loginName'] = orig['username']
+        converted['password'] = '12345678'
     # FIXME: convert fields if need.
     return converted
 
@@ -56,9 +59,9 @@ def save_object(schema, obj, obj_id):
     logger.debug('save_object: schema=%s obj=%s obj_id=%s' %
             (schema, obj, obj_id))
     if is_user_schema(schema):
-        return kii_cloud.create_user(obj, obj_id)
+        return kii_cloud.create_user(obj)
     else:
-        return kii_cloud.create_object(obj, obj_id)
+        return kii_cloud.create_object(schema, obj, obj_id)
 
 def migrate_an_object(schema, orig):
     obj_id = orig.get('objectId')
