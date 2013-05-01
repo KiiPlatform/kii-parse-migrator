@@ -2,6 +2,25 @@
 
 Data migration tool from parse.com to kii.com.
 
+## USAGE
+
+```
+usage: kii-parse-migrator [-h] -i INPUT -d APP_ID -k APP_KEY [-r REGION] [-v]
+
+Move data from Parse to Kii Cloud
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i INPUT, --input INPUT
+                        export.zip from Parse
+  -d APP_ID, --app_id APP_ID
+                        App ID of your app on Kii Cloud
+  -k APP_KEY, --app_key APP_KEY
+                        App Key of your app on Kii Cloud
+  -r REGION, --region REGION
+  -v, --verbose
+```
+
 ## Contribution
 
 *   [httplib2](https://code.google.com/p/httplib2/)
