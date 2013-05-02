@@ -35,6 +35,13 @@ def to_json(array):
     # FIXME: add error handling
     return json.loads('\n'.join(array))
 
+def get_object_id(obj):
+    raw_id = obj.get('objectId')
+    if raw_id and isinstance(raw_id, dict):
+        return raw_id.get('$oid')
+    else:
+        return raw_id
+
 def read_json_objects(file):
     buf = []
     for line in file:
@@ -64,7 +71,7 @@ def save_object(schema, obj, obj_id):
         return kii_cloud.create_object(schema, obj, obj_id)
 
 def migrate_an_object(schema, orig):
-    obj_id = orig.get('objectId')
+    obj_id = get_object_id(orig)
     converted = convert_object(schema, orig)
     return save_object(schema, converted, obj_id)
 

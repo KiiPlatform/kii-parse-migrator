@@ -55,8 +55,10 @@ def create_user(data):
         return False
 
 def _has_token(username, password):
-    if not create_user({ u'loginName': username, u'password': password }):
-        return None
+    if TOKEN:
+        return True
+    elif not create_user({ u'loginName': username, u'password': password }):
+        return False
     uri = u'/'.join([BASE_URL, u'oauth2', u'token'])
     data = {
             u'username': username,

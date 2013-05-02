@@ -32,3 +32,5 @@ optional arguments:
 
 Migrated objects are not counted in developer portal Web UI.  It is an isssue
 of Web UI, and will be fixed soon.  (CMO-3228)
+
+All migrated users have same password "12345678".
