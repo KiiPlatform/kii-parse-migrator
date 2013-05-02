@@ -23,12 +23,12 @@ Prepare App ID (APP_ID) and Key (APP_KEY) from [Kii Cloud developer portal](http
 
 Now we can migrate, try this:
 
-    $ python kii-parse-migrator -i export.zip --app_id {APP_ID} --app_key {APP_KEY}
+    $ python kii-parse-migrator -i export.zip --app_id {APP_ID} --app_key {APP_KEY} -l migration.log
 
 Where `{APP_ID}` and `{APP_KEY}` are replaced by yours.  When you use Japan
 server, add `-r` option like this:
 
-    $ python kii-parse-migrator -i export.zip --app_id {APP_ID} --app_key {APP_KEY} -r jp
+    $ python kii-parse-migrator -i export.zip --app_id {APP_ID} --app_key {APP_KEY} -l migration.log -r jp
 
 
 This generate `migration.log`, which inculude sample of command to verify
@@ -59,6 +59,7 @@ optional arguments:
                         App Key of your app on Kii Cloud
   -r REGION, --region REGION
                         Specify "jp" for Japan server
+  -l LOG, --log LOG     Output migration log
   -n, --dryrun
   -v, --verbose
 ```
@@ -70,6 +71,8 @@ optional arguments:
 
 
 ## Limitation
+
+When you have very many (1M or over) users or buckets, try to disable log (remove `-l` option).
 
 Migrated objects are not counted in developer portal Web UI.  It is an isssue
 of Web UI, and will be fixed soon.  (CMO-3228)
