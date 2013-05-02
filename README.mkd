@@ -2,6 +2,37 @@
 
 Data migration tool from parse.com to kii.com.
 
+
+## Tutorial
+
+Install: clone repository of migration tool.
+
+    $ git clone git@github.com:KiiPlatform/kii-parse-migrator.git
+    $ cd kii-parse-migrator
+
+or download zip of the tool and extract it.
+
+    $ curl -o kii-parse-migrator.zip -L https://github.com/KiiPlatform/kii-parse-migrator/archive/master.zip 
+    $ unzip kii-parse-migrator-master
+
+Call current directory as TOPDIR.
+
+Get export.zip from parse: follow [parse's instraction](http://blog.parse.com/2012/03/09/one-click-export/).  And put it in TOPDIR, which name should be `export.zip`.
+
+Prepare App ID (APP_ID) and Key (APP_KEY) from [Kii Cloud developer portal](https://developer.kii.com).
+
+Now we can migrate, try this:
+
+    $ python kii-parse-migrator -i export.zip --app_id {APP_ID} --app_key {APP_KEY}
+
+Where `{APP_ID}` and `{APP_KEY}` are replaced by yours.  When you use Japan
+server, add `-r` option like this:
+
+    $ python kii-parse-migrator -i export.zip --app_id {APP_ID} --app_key {APP_KEY} -r jp
+
+Good luck.
+
+
 ## USAGE
 
 ```
