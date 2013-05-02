@@ -30,8 +30,17 @@ server, add `-r` option like this:
 
     $ python kii-parse-migrator -i export.zip --app_id {APP_ID} --app_key {APP_KEY} -r jp
 
+
+This generate `migration.log`, which inculude sample of command to verify
+migration.  When you want to verify result of migration, please look at that
+file.
+
 Good luck.
 
+
+## Verification
+
+See generated `migration.log`.
 
 ## USAGE
 
@@ -54,6 +63,7 @@ optional arguments:
   -v, --verbose
 ```
 
+
 ## Contribution
 
 *   [httplib2](https://code.google.com/p/httplib2/)
@@ -64,4 +74,6 @@ optional arguments:
 Migrated objects are not counted in developer portal Web UI.  It is an isssue
 of Web UI, and will be fixed soon.  (CMO-3228)
 
-All migrated users have same password "12345678".
+A new user `kii_migrator` (password: `12345678` is created automatically.
+
+All migrated users have same password `12345678`.

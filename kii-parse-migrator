@@ -8,8 +8,13 @@ import argparse
 from zipfile import ZipFile
 import json
 import os
+import sys
+import re
 
 logger = logging.getLogger('kii-parse-migrator')
+
+USERS = {}
+BUCKETS = {}
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -29,7 +34,8 @@ def is_user_schema(schema):
     return schema == '_User'
 
 def to_schema(filename):
-    return os.path.splitext(os.path.basename(filename))[0]
+    raw = os.path.splitext(os.path.basename(filename))[0]
+    return re.sub(r'[^-a-zA-Z0-9_]', '_', raw)
 
 def to_json(array):
     # FIXME: add error handling
@@ -65,10 +71,17 @@ def convert_object(schema, orig):
 def save_object(schema, obj, obj_id):
     logger.debug('save_object: schema=%s obj=%s obj_id=%s' %
             (schema, obj, obj_id))
+    retval = False
     if is_user_schema(schema):
-        return kii_cloud.create_user(obj)
+        retval = kii_cloud.create_user(obj)
+        username = obj.get('loginName')
+        if retval and username:
+            USERS[username] = True
     else:
-        return kii_cloud.create_object(schema, obj, obj_id)
+        retval = kii_cloud.create_object(schema, obj, obj_id)
+        if retval and schema:
+            BUCKETS[schema] = True
+    return retval
 
 def migrate_an_object(schema, orig):
     obj_id = get_object_id(orig)
@@ -84,6 +97,8 @@ def migrate_objects(zip_file, filename):
             (filename, schema))
     try:
         zf = zip_file.open(filename, 'rU')
+        if not zf:
+            print('HERE_A')
         for json in read_json_objects(zf):
             migrate_an_object(schema, json)
     finally:
@@ -100,6 +115,55 @@ def migrate_to_kii(zip_path, app_id, app_key, region):
     finally:
         zip_file.close()
 
+def output_result(out):
+    out.write('Migration results\n')
+    out.write('\nUsers (loginName):\n')
+    for name in USERS:
+        out.write('    %s\n' % name)
+    out.write('\nBuckets:\n')
+    for bucket in BUCKETS:
+        out.write('    %s\n' % bucket)
+    if kii_cloud.TOKEN:
+        out.write('\nToken: %s\n' % kii_cloud.TOKEN)
+    msg = """
+Sample of verification commands:
+
+* Users
+
+  curl -v -X GET \\
+      -H "Authorization:Bearer {TOKEN}" \\
+      -H "x-kii-appid:{APP_ID}" \\
+      -H "x-kii-appkey:{APP_KEY}" \\
+      "{BASE_URL}/apps/{APP_ID}/users/LOGIN_NAME:{{USERNAME}}"
+
+  Where {{USERNAME}} is replaced by one of above users.
+
+  See below for details:
+
+    http://documentation.kii.com/en/guides/rest/managing-users/retrieving-other-user-s-data/
+    http://documentation.kii.com/ja/guides/rest/managing-users/retrieving-other-user-s-data/
+
+* Bucket and objects
+
+  curl -v -X POST \\
+      -H "Authorization:Bearer {TOKEN}" \\
+      -H "content-type:application/vnd.kii.QueryRequest+json" \\
+      -H "x-kii-appid:{APP_ID}" \\
+      -H "x-kii-appkey:{APP_KEY}" \\
+      -d '{{"bucketQuery":{{"clause":{{"type":"all"}}}}}}' \\
+      "{BASE_URL}/apps/{APP_ID}/buckets/{{BUCKETNAME}}/query"
+
+  Where {{BUCKETNAME}} is replaced by one of above buckets.
+
+  See below for details:
+
+    http://documentation.kii.com/en/guides/rest/managing-data/object-storages/querying/
+    http://documentation.kii.com/ja/guides/rest/managing-data/object-storages/querying/
+
+"""
+    out.write(msg.format(BASE_URL=kii_cloud.BASE_URL, TOKEN=kii_cloud.TOKEN,
+        APP_ID=kii_cloud.APP_ID, APP_KEY=kii_cloud.APP_KEY))
+
 if __name__=="__main__":
     args = parse_args()
     if args.verbose:
@@ -110,4 +174,11 @@ if __name__=="__main__":
             logger.debug('save_object: schema=%s obj=%s obj_id=%s' %
                     (schema, obj, obj_id))
             return True
+
     migrate_to_kii(args.input, args.app_id, args.app_key, args.region)
+
+    log = open('migration.log', 'wb')
+    try:
+        output_result(log)
+    finally:
+        log.close()

@@ -55,6 +55,7 @@ def create_user(data):
         return False
 
 def _has_token(username, password):
+    global TOKEN
     if TOKEN:
         return True
     elif not create_user({ u'loginName': username, u'password': password }):
@@ -75,7 +76,6 @@ def _has_token(username, password):
     if resp_json['access_token'] == None:
         return False
     else:
-        global TOKEN
         TOKEN = str(resp_json['access_token'])
         return True
 
@@ -93,7 +93,7 @@ def create_object(bucket, data, obj_id=None):
             'x-kii-appkey': APP_KEY,
             }
     (resp, resp_json) = json_request(uri, 'PUT', data, headers)
-    if resp.status == 201:
+    if resp.status == 201 or resp.status == 200:
         return True
     else:
         return False
