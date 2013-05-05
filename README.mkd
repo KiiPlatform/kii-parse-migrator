@@ -13,7 +13,8 @@ Install: clone repository of migration tool.
 or download zip of the tool and extract it.
 
     $ curl -o kii-parse-migrator.zip -L https://github.com/KiiPlatform/kii-parse-migrator/archive/master.zip 
-    $ unzip kii-parse-migrator-master
+    $ unzip master.zip
+    $ cd kii-parse-migrator-master
 
 Call current directory as TOPDIR.
 
