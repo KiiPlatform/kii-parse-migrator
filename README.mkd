@@ -18,7 +18,7 @@ or download zip of the tool and extract it.
 
 Call current directory as TOPDIR.
 
-Get export.zip from parse: follow [parse's instraction](http://blog.parse.com/2012/03/09/one-click-export/).  And put it in TOPDIR, which name should be `export.zip`.
+Get export.zip from parse: follow [parse's instruction](http://blog.parse.com/2012/03/09/one-click-export/).  And put it in TOPDIR, which name should be `export.zip`.
 
 Prepare App ID (APP_ID) and Key (APP_KEY) from [Kii Cloud developer portal](https://developer.kii.com).
 
@@ -32,7 +32,7 @@ server, add `-r` option like this:
     $ python kii-parse-migrator -i export.zip --app_id {APP_ID} --app_key {APP_KEY} -l migration.log -r jp
 
 
-This generate `migration.log`, which inculude sample of command to verify
+This generate `migration.log`, which include sample of command to verify
 migration.  When you want to verify result of migration, please look at that
 file.
 
