@@ -81,3 +81,7 @@ of Web UI, and will be fixed soon.  (CMO-3228)
 A new user `kii_migrator` (password: `12345678` is created automatically.
 
 All migrated users have same password `12345678`.
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/KiiPlatform/kii-parse-migrator/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
