@@ -20,16 +20,18 @@ Call current directory as TOPDIR.
 
 Get export.zip from parse: follow [parse's instruction](http://blog.parse.com/2012/03/09/one-click-export/).  And put it in TOPDIR, which name should be `export.zip`.
 
+> Unzip the file, creating a directory named `export`
+
 Prepare App ID (APP_ID) and Key (APP_KEY) from [Kii Cloud developer portal](https://developer.kii.com).
 
 Now we can migrate, try this:
 
-    $ python kii-parse-migrator -i export.zip --app_id {APP_ID} --app_key {APP_KEY} -l migration.log
+    $ python kii-parse-migrator -i export --app_id {APP_ID} --app_key {APP_KEY} -l migration.log
 
 Where `{APP_ID}` and `{APP_KEY}` are replaced by yours.  When you use Japan
 server, add `-r` option like this:
 
-    $ python kii-parse-migrator -i export.zip --app_id {APP_ID} --app_key {APP_KEY} -l migration.log -r jp
+    $ python kii-parse-migrator -i export --app_id {APP_ID} --app_key {APP_KEY} -l migration.log -r jp
 
 
 This generate `migration.log`, which include sample of command to verify

@@ -10,6 +10,7 @@ import json
 import os
 import sys
 import re
+import io
 
 logger = logging.getLogger('kii-parse-migrator')
 
@@ -50,23 +51,11 @@ def get_object_id(obj):
     else:
         return raw_id
 
-def read_json_objects(file):
-    buf = []
-    for line in file:
-        s = line.rstrip()
-        if s == '{':
-            buf = [ '{' ]
-        elif s == '}' or s == '},':
-            buf.append('}')
-            yield to_json(buf)
-        else:
-            buf.append(s)
-
 def convert_object(schema, orig):
     converted = orig.copy()
     if is_user_schema(schema):
         converted['loginName'] = orig['username']
-        converted['password'] = '12345678'
+        converted['password'] = orig['bcryptPassword']
     # FIXME: convert fields if need.
     return converted
 
@@ -90,32 +79,32 @@ def migrate_an_object(schema, orig):
     converted = convert_object(schema, orig)
     return save_object(schema, converted, obj_id)
 
-def migrate_objects(zip_file, filename):
+def migrate_objects(filename):
     schema = to_schema(filename)
     if not schema:
         logger.warn('skip %s', filename)
         return
     logger.debug('migrate_objects: filename=%s (schema=%s)' %
             (filename, schema))
-    try:
-        zf = zip_file.open(filename, 'rU')
-        if not zf:
-            print('HERE_A')
-        for json in read_json_objects(zf):
-            migrate_an_object(schema, json)
-    finally:
-        zf.close()
+    
+    json_data=open(filename)
+    data = json.load(json_data)
+    json_data.close()
+    
+    for item in data['results']:
+        print migrate_an_object(schema, item)
+
 
 def migrate_to_kii(zip_path, app_id, app_key, region):
     kii_cloud.init(app_id, app_key, region)
-    zip_file = ZipFile(zip_path, 'r')
-    try:
-        for info in zip_file.infolist():
-            if info.filename[-5:] != '.json':
-                continue
-            migrate_objects(zip_file, info.filename)
-    finally:
-        zip_file.close()
+    
+    # iterate thru the directory
+    for subdir, dirs, files in os.walk(zip_path):
+        for file in files:
+            if file[-5:] == '.json':
+                migrate_objects(subdir+'/'+file)
+            
+            
 
 def output_result(out):
     out.write('Migration results\n')
