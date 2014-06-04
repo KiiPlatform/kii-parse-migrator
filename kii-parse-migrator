@@ -55,7 +55,7 @@ def convert_object(schema, orig):
     converted = orig.copy()
     if is_user_schema(schema):
         converted['loginName'] = orig['username']
-        converted['password'] = orig['bcryptPassword']
+        converted['password'] = "123456" #orig['bcryptPassword']
     # FIXME: convert fields if need.
     return converted
 
