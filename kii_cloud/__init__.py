@@ -16,7 +16,13 @@ def init(app_id, app_key, region):
     global APP_ID, APP_KEY, BASE_URL
     APP_ID = app_id
     APP_KEY = app_key
-    if region == u'jp':
+    if region == u'sg':
+        default_logger.debug('region is Singapore')
+        BASE_URL = u'https://api-sg.kii.com/api'
+    elif region == u'cn':
+        default_logger.debug('region is China')
+        BASE_URL = u'https://api-cn2.kii.com/api'
+    elif region == u'jp':
         default_logger.debug('region is Japan')
         BASE_URL = u'https://api-jp.kii.com/api'
     else:
