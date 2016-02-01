@@ -1,7 +1,17 @@
 # Kii Parse Migrator
 
 Data migration tool from parse.com to kii.com.
+Migrate Parse Users and Objects into KiiCloud Users and Objects.
 
+You can use this tool for migration from Parse.
+However, this tool is just a reference. It doesn't provide complete migration from Parse.
+ex.)
+- Object ACL won't be imported.
+- GeoPoint format is different.
+- Files won't be imported.
+etc.
+
+You may need to dig into the code and modify the migration tool for your needs.
 
 ## Tutorial
 
@@ -31,6 +41,9 @@ server, add `-r` option like this:
 
     $ python kii-parse-migrator -i export.zip --app_id {APP_ID} --app_key {APP_KEY} -l migration.log -r jp
 
+for `-r` option, jp, cn3, sg and cn can be used.
+(cn3 is newer location in China. If you can see `Server LocationChina (CN3)`
+In you app list, please use cn3.)
 
 This generate `migration.log`, which include sample of command to verify
 migration.  When you want to verify result of migration, please look at that

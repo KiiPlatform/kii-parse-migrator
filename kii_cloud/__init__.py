@@ -22,6 +22,9 @@ def init(app_id, app_key, region):
     elif region == u'cn':
         default_logger.debug('region is China')
         BASE_URL = u'https://api-cn2.kii.com/api'
+    elif region == u'cn3':
+        default_logger.debug('region is China')
+        BASE_URL = u'https://api-cn3.kii.com/api'
     elif region == u'jp':
         default_logger.debug('region is Japan')
         BASE_URL = u'https://api-jp.kii.com/api'
