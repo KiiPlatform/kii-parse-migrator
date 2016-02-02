@@ -49,6 +49,18 @@ def json_request(uri, method, data, headers, logger=None):
     except ValueError:
         return (resp_headers, {})
 
+def convert_user_data(data):
+    data_copy = data.copy();
+    convert_crypted_password(data_copy);
+    # create another converter here if needed.
+    return data_copy;
+
+def convert_crypted_password(data_copy):
+    cpass = data_copy.get('bcryptPassword');
+    if cpass != None:
+        del data_copy['bcryptPassword'];
+        data_copy['password'] = cpass
+
 def create_user(data):
     uri_array = [BASE_URL, u'apps', APP_ID, u'users']
     uri = u'/'.join(uri_array)
@@ -57,7 +69,8 @@ def create_user(data):
             u'x-kii-appid': APP_ID,
             u'x-kii-appkey': APP_KEY,
             }
-    (resp, content) = json_request(uri, 'POST', data, headers)
+    converted = convert_user_data(data)
+    (resp, content) = json_request(uri, 'POST', converted, headers)
     if resp.status == 201 or resp.status == 409:
         return True
     else:
